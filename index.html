@@ -1,19 +1,124 @@
 <HTML>
-<HEAD>
-  <META NAME="GENERATOR" CONTENT="Adobe PageMill 3.0 Win">
-  <TITLE>Sjöänd Skans - Fort 118</TITLE>
-  <META NAME="keywords" CONTENT="Fort118, Fort 118, Skans118, Skans 118, Sjöänds Skans, Sjöänd Skans, Glaskogen, Beredskapstiden, Befästningar,
- Fästningar, Skansar, Värmland, I2, Beredskapstiden, Sjöändans Skans, Skans, Försvarsanläggning, Bunker, Skyttevärn, Kulsprutevärn, PV-kanon
-Stridsvagnshinder">
-  <META NAME="description" CONTENT="Här får du information om Sjöänd Skans i Glaskogen">
-</HEAD>
-<FRAMESET FRAMEBORDER=0 BORDER=0 FRAMESPACING=0 COLS="17%,83%">
-<FRAME SRC="sid-2.html" NAME="leftFrame">
-<FRAME SRC="sid-3.html" NAME="rightFrame">
-<NOFRAMES>
-<BODY>
-Viewing this page requires a browser capable of displaying frames.
-</BODY>
-</NOFRAMES>
-</FRAMESET>
+  <HEAD>
+    <meta charset="utf-8">
+    <meta content="width=device-width,initial-scale=1.0" name="viewport">
+    <TITLE>Sjöänd Skans - Fort 118</TITLE>
+    <script>
+      var frameRouterInitialized = false;
+
+      function normalizePage(value) {
+        if (!value) 
+          return "sid-3.html";
+        value = String(value)
+          .split("#")[0]
+          .split("?")[0];
+        value = value.substring(value.lastIndexOf("/") + 1);
+        return value || "sid-3.html";
+      }
+
+      function getRequestedPage() {
+        var hash = window
+          .location
+          .hash
+          .slice(1);
+        return normalizePage(hash || "sid-3.html");
+      }
+
+      function updateHash(page) {
+        var normalized = normalizePage(page);
+
+        if (window.location.hash.slice(1) !== normalized) {
+          window.location.hash = normalized;
+        } else {
+          loadContentFromHash();
+        }
+
+        return false;
+      }
+
+      function loadContentFromHash() {
+        var frame = window.frames["rightFrame"];
+        if (!frame) 
+          return;
+        
+        var wanted = getRequestedPage();
+
+        try {
+          var current = normalizePage(frame.location.pathname);
+          if (current !== wanted) {
+            frame
+              .location
+              .replace(wanted);
+          }
+        } catch (e) {
+          frame
+            .location
+            .replace(wanted);
+        }
+      }
+
+      function onRightFrameLoad() {
+        var frame = window.frames["rightFrame"];
+        if (!frame) 
+          return;
+        
+        var current;
+
+        try {
+          current = normalizePage(frame.location.pathname);
+        } catch (e) {
+          return;
+        }
+
+        var wanted = getRequestedPage();
+
+        console.log("onRightFrameLoad", {
+          initialized: frameRouterInitialized,
+          current: current,
+          wanted: wanted,
+          hash: window.location.hash
+        });
+
+        // Första gången: om hash säger en annan sida än den initiala src, ladda den sidan först.
+        if (!frameRouterInitialized) {
+          frameRouterInitialized = true;
+
+          if (current !== wanted) {
+            frame
+              .location
+              .replace(wanted);
+            return;
+          }
+
+          // Ingen hash eller samma sida som redan laddats: skriv korrekt hash.
+          if (window.location.hash.slice(1) !== current) {
+            history.replaceState(null, "", "#" + current);
+          }
+
+          return;
+        }
+
+        // Normal drift: frame har laddat en ny sida via navigation eller interna länkar.
+        if (window.location.hash.slice(1) !== current) {
+          history.replaceState(null, "", "#" + current);
+        }
+      }
+
+      window.addEventListener("hashchange", function () {
+        if (!frameRouterInitialized) 
+          return;
+        loadContentFromHash();
+      });
+    </script>
+  </HEAD>
+
+  <FRAMESET FRAMEBORDER="0" BORDER="0" FRAMESPACING="0" COLS="17%,83%">
+    <FRAME SRC="navigation.html" NAME="leftFrame">
+    <FRAME SRC="sid-3.html" NAME="rightFrame" onload="onRightFrameLoad()">
+    <NOFRAMES>
+      <BODY>
+      Viewing this page requires a browser capable of displaying frames.
+    </BODY>
+    </NOFRAMES>
+  </FRAMESET>
 </HTML>

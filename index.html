@@ -8,12 +8,12 @@
 
       function normalizePage(value) {
         if (!value) 
-          return "sid-3.html";
+          return "start.html";
         value = String(value)
           .split("#")[0]
           .split("?")[0];
         value = value.substring(value.lastIndexOf("/") + 1);
-        return value || "sid-3.html";
+        return value || "start.html";
       }
 
       function getRequestedPage() {
@@ -21,7 +21,7 @@
           .location
           .hash
           .slice(1);
-        return normalizePage(hash || "sid-3.html");
+        return normalizePage(hash || "start.html");
       }
 
       function updateHash(page) {
@@ -114,7 +114,7 @@
 
   <FRAMESET FRAMEBORDER="0" BORDER="0" FRAMESPACING="0" COLS="17%,83%">
     <FRAME SRC="navigation.html" NAME="leftFrame">
-    <FRAME SRC="sid-3.html" NAME="rightFrame" onload="onRightFrameLoad()">
+    <FRAME SRC="start.html" NAME="rightFrame" onload="onRightFrameLoad()">
     <NOFRAMES>
       <BODY>
       Viewing this page requires a browser capable of displaying frames.
